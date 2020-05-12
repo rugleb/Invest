@@ -24,6 +24,7 @@ ACCESS_LOG_FORMAT = (
 
 app_logger = logging.getLogger("app")
 access_logger = logging.getLogger("access")
+db_logger = logging.getLogger("db")
 
 
 CONFIG = {
@@ -48,6 +49,13 @@ CONFIG = {
             "level": LEVEL,
             "handlers": [
                 "access",
+            ],
+            "propagate": False,
+        },
+        db_logger.name: {
+            "level": LEVEL,
+            "handlers": [
+                "default",
             ],
             "propagate": False,
         },
@@ -154,7 +162,7 @@ class RequestIDFilter(logging.Filter):
         super().__init__(name)
 
     def filter(self, record: logging.LogRecord) -> int:
-        request_id = self.context_var.get()
+        request_id = self.context_var.get("-")
         setattr(record, "request_id", request_id)
 
         return super().filter(record)

@@ -5,6 +5,7 @@ from typing import Callable
 import pytest
 from aiohttp.abc import Application
 from aiohttp.test_utils import TestClient
+from sqlalchemy import orm
 
 import invest_api
 
@@ -14,8 +15,23 @@ pytest_plugins = [
 
 
 @pytest.fixture
-async def app() -> Application:
-    return await invest_api.create_app()
+async def app(db_session: orm.Session) -> Application:
+    db_url = str(db_session.bind.url)
+
+    config = {
+        "db": {
+            "pool": {
+                "dsn": db_url,
+                "min_size": 1,
+                "max_size": 5,
+            },
+            "logger": {
+                "name": "db",
+            },
+        },
+    }
+
+    return await invest_api.create_app(config)
 
 
 @pytest.fixture

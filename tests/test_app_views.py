@@ -24,3 +24,24 @@ class TestPingView:
 
         request_id = response.headers.get("X-Request-ID")
         assert is_valid_uuid(request_id)
+
+
+class TestHealthView:
+    url = "/health"
+
+    async def test_that_route_is_named(self, client: TestClient) -> None:
+        url = client.app.router["health"].url_for()
+
+        assert self.url == str(url)
+
+    async def test_that_service_is_alive(self, client: TestClient) -> None:
+        response = await client.get(self.url)
+        assert response.status == HTTPStatus.OK
+
+        assert await response.json() == {
+            "data": {},
+            "message": "OK",
+        }
+
+        request_id = response.headers.get("X-Request-ID")
+        assert is_valid_uuid(request_id)

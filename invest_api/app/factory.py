@@ -10,6 +10,7 @@ from yarl import URL
 from invest_api.log import app_logger, setup_logging
 from invest_api.settings import get_config
 
+from .db import DB
 from .middlewares import add_middlewares
 from .views import add_routes
 
@@ -33,6 +34,18 @@ def setup_asyncio() -> None:
     loop.set_exception_handler(handler)
 
 
+async def db_context(app: web.Application) -> AsyncIterator:
+    db_config = app["config"]["db"]
+
+    db = DB.from_dict(db_config)
+    await db.setup()
+
+    app["db"] = db
+    yield
+
+    await db.cleanup()
+
+
 async def create_app(config: Dict = None) -> web.Application:
     setup_logging()
     setup_asyncio()
@@ -42,6 +55,8 @@ async def create_app(config: Dict = None) -> web.Application:
     add_middlewares(app)
 
     app["config"] = config or get_config()
+
+    app.cleanup_ctx.append(db_context)
 
     return app
 

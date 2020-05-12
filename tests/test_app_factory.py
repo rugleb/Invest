@@ -1,25 +1,22 @@
 from http import HTTPStatus
-from typing import Callable
 
 import aiohttp
+from yarl import URL
 
 from invest_api.utils import is_valid_uuid
 
 
-async def test_invest_api_server_factory_fixture(
-        invest_api_server_factory: Callable,
-) -> None:
-    async with invest_api_server_factory() as base_url:
-        url = base_url.with_path("ping")
+async def test_invest_api_server_fixture(invest_api_server: URL) -> None:
+    url = invest_api_server.with_path("health")
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                assert response.status == HTTPStatus.OK
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            assert response.status == HTTPStatus.OK
 
-                assert await response.json() == {
-                    "data": {},
-                    "message": "pong",
-                }
+            assert await response.json() == {
+                "data": {},
+                "message": "OK",
+            }
 
-                request_id = response.headers.get("X-Request-ID")
-                assert is_valid_uuid(request_id)
+            request_id = response.headers.get("X-Request-ID")
+            assert is_valid_uuid(request_id)
