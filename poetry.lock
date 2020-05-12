@@ -356,6 +356,14 @@ python-versions = "*"
 version = "0.4.3"
 
 [[package]]
+category = "main"
+description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
+name = "orjson"
+optional = false
+python-versions = ">=3.6"
+version = "3.0.0"
+
+[[package]]
 category = "dev"
 description = "Core utilities for Python packages"
 name = "packaging"
@@ -549,14 +557,6 @@ python-versions = "*"
 version = "3.7.4.2"
 
 [[package]]
-category = "main"
-description = "Ultra fast JSON encoder and decoder for Python"
-name = "ujson"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "2.0.3"
-
-[[package]]
 category = "dev"
 description = "unittest-based test runner with Ant/JUnit like XML reporting."
 name = "unittest-xml-reporting"
@@ -614,7 +614,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "00322199128e04de343cc650d3f8f11b0ff7a6816f2d8f534cd9df7d8fce4b56"
+content-hash = "445bc09dd4eb8d2c2a0088e26a4287b2cb8622e85cb1ebd0c8564c8f43dd7c97"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -930,6 +930,23 @@ mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
 ]
+orjson = [
+    {file = "orjson-3.0.0-cp36-cp36m-macosx_10_7_x86_64.whl", hash = "sha256:e80172353af3743bfd3d76f4e6949fb5e79a45606df8c55fa4e88adf5fe02d32"},
+    {file = "orjson-3.0.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:198b64d2d4faf3939482ed1bc7618c29556c1fd3570856bbf8d2623334e01f4e"},
+    {file = "orjson-3.0.0-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:3c70132aad0628a9aaa487a81156bb361c20ba7384e684dc8d6b224230192032"},
+    {file = "orjson-3.0.0-cp36-none-win_amd64.whl", hash = "sha256:b11939baf1db062b7f3b1508ec5d28e3bc84863548d591895f77696773410b08"},
+    {file = "orjson-3.0.0-cp37-cp37m-macosx_10_7_x86_64.whl", hash = "sha256:d0fa6be6f6bda17d4ff16648f7b0f7d92c314b5b31a4f00d6053d8c1f91f7ab1"},
+    {file = "orjson-3.0.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:f5e67c84495604ba8b3cf6a74f1c9ab74c269009d84f6a81d72015d883c476dd"},
+    {file = "orjson-3.0.0-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:2528e60c3f6706e93add1e0e84c4393141a9ca4b16a4ff0012a98a5ec805412e"},
+    {file = "orjson-3.0.0-cp37-none-win_amd64.whl", hash = "sha256:00ff451c27462ea97ef8f986a80f59f87c535ee5e71a3e789037e7eb31fd0bbe"},
+    {file = "orjson-3.0.0-cp38-cp38-macosx_10_7_x86_64.whl", hash = "sha256:ed23eac4e29c0bdaef7148d51941b2f1c4b3be036240cf3d1112eb3351c9064d"},
+    {file = "orjson-3.0.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:2cecf9c431f3e363b30aa2c405a6bb4c775f314a2b6445687a78fe5763a95078"},
+    {file = "orjson-3.0.0-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:329313dd886573d2efc3106a60e9359b51f8821a6e82ffa7a9484dc6907d4110"},
+    {file = "orjson-3.0.0-cp38-none-win_amd64.whl", hash = "sha256:3b261949a32fd574fc1fcb120c83fc19894941acd5722eca36652bef0ad6b837"},
+    {file = "orjson-3.0.0-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:f2fd10c518207481f70194cb735e3590a6b60e29e02ab7b5524422b23020d353"},
+    {file = "orjson-3.0.0-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:0c2d14cd29853b4af7c5521969679472354e0f6114c3f087e7547b1eb7f37348"},
+    {file = "orjson-3.0.0.tar.gz", hash = "sha256:3aec5ef973372bf5c9cb7c80dd84e0dd98ba77984cd67d47c0995d8fd2918265"},
+]
 packaging = [
     {file = "packaging-20.3-py2.py3-none-any.whl", hash = "sha256:82f77b9bee21c1bafbf35a84905d604d5d1223801d639cf3ed140bd651c08752"},
     {file = "packaging-20.3.tar.gz", hash = "sha256:3c292b474fda1671ec57d46d739d072bfd495a4f51ad01a055121d81e952b7a3"},
@@ -1057,15 +1074,6 @@ typing-extensions = [
     {file = "typing_extensions-3.7.4.2-py2-none-any.whl", hash = "sha256:f8d2bd89d25bc39dabe7d23df520442fa1d8969b82544370e03d88b5a591c392"},
     {file = "typing_extensions-3.7.4.2-py3-none-any.whl", hash = "sha256:6e95524d8a547a91e08f404ae485bbb71962de46967e1b71a0cb89af24e761c5"},
     {file = "typing_extensions-3.7.4.2.tar.gz", hash = "sha256:79ee589a3caca649a9bfd2a8de4709837400dfa00b6cc81962a1e6a1815969ae"},
-]
-ujson = [
-    {file = "ujson-2.0.3-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:7ae13733d9467d16ccac2f38212cdee841b49ae927085c533425be9076b0bc9d"},
-    {file = "ujson-2.0.3-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:6217c63a36e9b26e9271e686d212397ce7fb04c07d85509dd4e2ed73493320f8"},
-    {file = "ujson-2.0.3-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:c8369ef49169804944e920c427e350182e33756422b69989c55608fc28bebf98"},
-    {file = "ujson-2.0.3-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:0c23f21e8d2b60efab57bc6ce9d1fb7c4e96f4bfefbf5a6043a3f3309e2a738a"},
-    {file = "ujson-2.0.3-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:3d1f4705a4ec1e48ff383a4d92299d8ec25e9a8158bcea619912440948117634"},
-    {file = "ujson-2.0.3-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:2ab88e330405315512afe9276f29a60e9b3439187b273665630a57ed7fe1d936"},
-    {file = "ujson-2.0.3.tar.gz", hash = "sha256:bd2deffc983827510e5145fb66e4cc0f577480c62fe0b4882139f8f7d27ae9a3"},
 ]
 unittest-xml-reporting = [
     {file = "unittest-xml-reporting-3.0.2.tar.gz", hash = "sha256:e09b8ae70cce9904cdd331f53bf929150962869a5324ab7ff3dd6c8b87e01f7d"},

@@ -1,0 +1,6 @@
+*
+!invest_api
+!gunicorn.config.py
+!poetry.lock
+!pyproject.toml
+!README.md
