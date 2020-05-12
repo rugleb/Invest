@@ -19,43 +19,39 @@ clean:
 	rm -rf $(VENV)
 
 .venv:
-	poetry env use 3.7
+	poetry install --no-root
 	poetry check
 
-venv: .venv
-
 .reports:
-	mkdir -p $(REPORTS)
+	mkdir $(REPORTS)
 
-reports: .reports
+setup: .venv .reports
 
-setup: clean venv reports
-
-install: .venv
+install: setup
 	poetry install --no-root
 
-update: venv
+update: setup
 	poetry update
 
-isort: venv reports
+isort: setup
 	isort -rc $(SOURCES) $(TESTS)
 
-mypy: venv reports
+mypy: setup
 	mypy $(SOURCES) $(TESTS)
 
-pylint: venv reports
+pylint: setup
 	pylint $(SOURCES) $(TESTS) > $(REPORTS)/pylint.txt
 
-flake: venv reports
+flake: setup
 	flake8 $(SOURCES) $(TESTS)
 
-bandit: venv reports
+bandit: setup
 	bandit -f json -o $(REPORTS)/bandit.json -r $(SOURCES) $(TESTS) -s B101
 
-test: venv reports
+test: setup
 	pytest
 
-cov: venv reports
+cov: setup
 	coverage run --source $(PROJECT) --module pytest
 	coverage report
 	coverage html -d $(COVERAGE)/html
