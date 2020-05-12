@@ -1,0 +1,22 @@
+language: python
+
+python:
+  - "3.7"
+  - "3.8"
+
+services:
+  - docker
+
+before_install:
+  - pip install -U pip poetry
+
+install:
+  - make install
+
+script:
+  - make lint
+  - make cov
+  - make build
+
+after_success:
+  - codecov
