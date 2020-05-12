@@ -13,7 +13,7 @@ LEVEL = settings.LEVEL
 DATETIME_FORMAT = settings.DATETIME_FORMAT
 
 ACCESS_LOG_FORMAT = (
-    'request_id="%{X-Request-Id}i" '
+    'request_id="%{X-Request-Id}o" '
     'remote_addr="%a" '
     'referer="%{Referer}i" '
     'user_agent="%{User-Agent}i" '

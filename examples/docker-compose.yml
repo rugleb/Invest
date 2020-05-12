@@ -8,6 +8,22 @@ services:
     container_name: invest_api
     ports:
       - 8080:8080
+    environment:
+      - DB_URL=postgresql://${DB_USER}:${DB_PASSWORD}@invest_db:5432/${DB_PASSWORD}
+    depends_on:
+      - invest_db
+    networks:
+      - invest_api_network
+
+  invest_db:
+    image: postgres:11-alpine
+    container_name: invest_db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
     networks:
       - invest_api_network
 
