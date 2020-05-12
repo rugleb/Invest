@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+
+  invest_api:
+    build: ..
+    image: invest_api:latest
+    container_name: invest_api
+    ports:
+      - 8080:8080
+    networks:
+      - invest_api_network
+
+networks:
+  invest_api_network:
+    name: invest_api_network
