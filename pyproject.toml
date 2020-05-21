@@ -9,7 +9,7 @@ repository = ""
 documentation = ""
 
 [tool.poetry.urls]
-git = ""
+git = "https://github.com/rugleb/invest_api"
 ci = ""
 issues = "https://github.com/rugleb/invest_api/issues"
 
