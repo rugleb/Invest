@@ -6,7 +6,7 @@ authors = ["Gleb Karpushkin <rugleb@gmail.com>"]
 readme = "README.md"
 homepage = "https://github.com/rugleb/invest_api"
 repository = ""
-documentation = ""
+documentation = "https://github.com/rugleb/invest_api/blob/master/README.md"
 
 [tool.poetry.urls]
 git = "https://github.com/rugleb/invest_api"
