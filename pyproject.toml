@@ -4,7 +4,7 @@ version = "0.0.1"
 description = ""
 authors = ["Gleb Karpushkin <rugleb@gmail.com>"]
 readme = "README.md"
-homepage = ""
+homepage = "https://github.com/rugleb/invest_api"
 repository = ""
 documentation = ""
 
