@@ -20,15 +20,14 @@ clean:
 
 .venv:
 	poetry install --no-root
-	poetry check
 
 .reports:
 	mkdir $(REPORTS)
 
 setup: .venv .reports
+	poetry check
 
 install: setup
-	poetry install --no-root
 
 update: setup
 	poetry update
@@ -61,9 +60,9 @@ cov: setup
 
 lint: isort mypy pylint flake bandit test
 
-build: lint
+build: lint cov
 	docker build . -t $(IMAGE_NAME) --pull
 
-all: setup install lint cov build
+all: lint cov build
 
 .DEFAULT_GOAL := all
