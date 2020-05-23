@@ -15,8 +15,8 @@ pytest_plugins = [
 
 
 @pytest.fixture
-async def app(db_session: orm.Session) -> Application:
-    db_url = str(db_session.bind.url)
+async def app(invest_api_session: orm.Session) -> Application:
+    db_url = str(invest_api_session.bind.url)
 
     config = {
         "db": {

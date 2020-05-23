@@ -11,6 +11,17 @@ services:
     environment:
       - DB_URL=postgresql://${DB_USER}:${DB_PASSWORD}@invest_db:5432/${DB_PASSWORD}
     depends_on:
+      - invest_migrations
+    networks:
+      - invest_api_network
+
+  invest_migrations:
+    image: invest_api:latest
+    container_name: invest_migrations
+    environment:
+      - DB_URL=postgresql://${DB_USER}:${DB_PASSWORD}@invest_db:5432/${DB_PASSWORD}
+    command: sh -c "sleep 2 && alembic upgrade head"
+    depends_on:
       - invest_db
     networks:
       - invest_api_network

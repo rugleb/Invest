@@ -9,6 +9,7 @@ COVERAGE := $(REPORTS)/coverage
 
 SOURCES := $(PROJECT) gunicorn.config.py
 TESTS := tests
+MIGRATIONS := migrations
 
 IMAGE_NAME := $(PROJECT)
 
@@ -20,12 +21,12 @@ clean:
 
 .venv:
 	poetry install --no-root
+	poetry check
 
 .reports:
 	mkdir $(REPORTS)
 
 setup: .venv .reports
-	poetry check
 
 install: setup
 
@@ -33,19 +34,19 @@ update: setup
 	poetry update
 
 isort: setup
-	isort -rc $(SOURCES) $(TESTS)
+	isort -rc $(SOURCES) $(TESTS) $(MIGRATIONS)
 
 mypy: setup
-	mypy $(SOURCES) $(TESTS)
+	mypy $(SOURCES) $(TESTS) $(MIGRATIONS)
 
 pylint: setup
-	pylint $(SOURCES) $(TESTS) > $(REPORTS)/pylint.txt
+	pylint $(SOURCES) $(TESTS) $(MIGRATIONS) > $(REPORTS)/pylint.txt
 
 flake: setup
-	flake8 $(SOURCES) $(TESTS)
+	flake8 $(SOURCES) $(TESTS) $(MIGRATIONS)
 
 bandit: setup
-	bandit -f json -o $(REPORTS)/bandit.json -r $(SOURCES) $(TESTS) -s B101
+	bandit -f json -o $(REPORTS)/bandit.json -r $(SOURCES) $(TESTS) $(MIGRATIONS) -s B101
 
 test: setup
 	pytest
