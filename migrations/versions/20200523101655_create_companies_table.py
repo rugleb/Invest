@@ -58,7 +58,7 @@ def upgrade() -> None:
         # Дата регистрации компании
         sa.Column("registered_at", pg.DATE, nullable=False),
 
-        # Уставной капитал компании, 0 и более
+        # Уставной капитал компании, больше 0
         sa.Column("charter_capital", pg.BIGINT, nullable=False),
         sa.CheckConstraint(sa.column("charter_capital") > 0),
 
