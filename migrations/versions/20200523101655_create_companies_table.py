@@ -81,8 +81,8 @@ def upgrade() -> None:
 
         # вероятность банкротства
         sa.Column("bankruptcy_probability", pg.SMALLINT, nullable=False),
-        sa.CheckConstraint(sa.column("bankruptcy_probability") > 0),
-        sa.CheckConstraint(sa.column("bankruptcy_probability") < 100),
+        sa.CheckConstraint(sa.column("bankruptcy_probability") >= 0),
+        sa.CheckConstraint(sa.column("bankruptcy_probability") <= 100),
 
         # Значимость переменных для оценки вероятности
         sa.Column("bankruptcy_vars", pg.JSONB, nullable=False),
