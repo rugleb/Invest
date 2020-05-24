@@ -24,7 +24,7 @@ def upgrade() -> None:
         # Уникальный идентификатор компании
         sa.Column("id", pg.BIGINT, primary_key=True),
 
-        # ИНН компании, 10-12 цифр, уникальный по всей таблице
+        # ИНН компании, 10 цифр, уникальный по всей таблице
         sa.Column("itn", pg.TEXT, unique=True),
         sa.CheckConstraint(r"itn ~ '^[0-9]{10}$'"),
 
