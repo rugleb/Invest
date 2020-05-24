@@ -35,7 +35,7 @@ def upgrade() -> None:
         # Название компании на русском языке
         sa.Column("name", pg.TEXT, nullable=False),
 
-        # Размер компании, 1 и более, если неизвестно, то NULL
+        # Размер компании, если неизвестно, то NULL
         sa.Column("size", pg.TEXT, nullable=False),
         sa.CheckConstraint("length(size) > 4"),
 
