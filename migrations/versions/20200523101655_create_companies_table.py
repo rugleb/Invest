@@ -22,7 +22,7 @@ def upgrade() -> None:
         "companies",
 
         # Уникальный идентификатор компании
-        sa.Column("id", pg.SMALLINT, primary_key=True),
+        sa.Column("id", pg.BIGINT, primary_key=True),
 
         # ИНН компании, 10-12 цифр, уникальный по всей таблице
         sa.Column("itn", pg.TEXT, unique=True),
