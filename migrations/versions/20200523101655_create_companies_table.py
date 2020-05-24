@@ -22,20 +22,22 @@ def upgrade() -> None:
         "companies",
 
         # Уникальный идентификатор компании
-        sa.Column("id", pg.SMALLINT, autoincrement=True, primary_key=True),
+        sa.Column("id", pg.SMALLINT, primary_key=True),
 
         # ИНН компании, 10-12 цифр, уникальный по всей таблице
-        sa.Column("ITN", pg.TEXT, unique=True),
+        sa.Column("itn", pg.TEXT, unique=True),
+        sa.CheckConstraint(r"itn ~ '^[0-9]{10}$'"),
 
         # ОГРН компании, 13 цифр, уникальный по всей таблице
-        sa.Column("PSRN", pg.TEXT, unique=True),
+        sa.Column("psrn", pg.TEXT, unique=True),
+        sa.CheckConstraint(r"psrn ~ '^[0-9]{13}$'"),
 
         # Название компании на русском языке
         sa.Column("name", pg.TEXT, nullable=False),
 
         # Размер компании, 1 и более, если неизвестно, то NULL
-        sa.Column("size", pg.SMALLINT, nullable=True),
-        sa.CheckConstraint(sa.column("size") > 1),
+        sa.Column("size", pg.TEXT, nullable=False),
+        sa.CheckConstraint("length(size) > 4"),
 
         # Номер региона страны предприятия, например: 05, 77 (2 цифры)
         sa.Column("region_code", pg.TEXT, nullable=False),
@@ -43,14 +45,14 @@ def upgrade() -> None:
 
         # Название региона страны предприятия, только большие буквы и тире
         sa.Column("region_name", pg.TEXT, nullable=False),
-        sa.CheckConstraint(r"region_name ~ '^[А-Я-]{2,}$'"),
+        sa.CheckConstraint("length(region_name) > 4"),
 
         # Код основного вида деятельности, если неизвестно, то NULL
         sa.Column("activity_code", pg.SMALLINT, nullable=True),
 
         # Название основного вида деятельности, если неизвестно, то NULL
         sa.Column("activity_name", pg.TEXT, nullable=True),
-        sa.CheckConstraint(r"activity_name ~ '^[А-Я-]{2,}$'"),
+        sa.CheckConstraint("length(activity_name) > 4"),
 
         # Дата регистрации компании
         sa.Column("registered_at", pg.DATE, nullable=False),
