@@ -43,7 +43,7 @@ def upgrade() -> None:
         sa.Column("region_code", pg.TEXT, nullable=False),
         sa.CheckConstraint(r"region_code ~ '^[0-9]{2}$'"),
 
-        # Название региона страны предприятия, только большие буквы и тире
+        # Название региона страны предприятия
         sa.Column("region_name", pg.TEXT, nullable=False),
         sa.CheckConstraint("length(region_name) > 4"),
 
