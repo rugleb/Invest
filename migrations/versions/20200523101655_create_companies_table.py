@@ -17,26 +17,12 @@ depends_on = None
 
 
 def upgrade() -> None:
-    server_uuid = sa.text("gen_random_uuid()")
-
     op.create_table(
         # Название таблицы
         "companies",
 
         # Уникальный идентификатор компании
-        sa.Column("id", pg.UUID, server_default=server_uuid),
-
-        # Название компании на русском языке
-        sa.Column("name", pg.TEXT, unique=True),
-
-        # Номер региона страны, например: 05, 77 (2 цифры)
-        sa.Column("region", pg.TEXT),
-
-        # Дата регистрации компании
-        sa.Column("registered_at", pg.DATE),
-
-        # Уставной капитал компании
-        sa.Column("authorized_capital", pg.SMALLINT),
+        sa.Column("id", pg.SMALLINT, autoincrement=True, primary_key=True),
 
         # ИНН компании, 10-12 цифр, уникальный по всей таблице
         sa.Column("ITN", pg.TEXT, unique=True),
@@ -44,44 +30,82 @@ def upgrade() -> None:
         # ОГРН компании, 13 цифр, уникальный по всей таблице
         sa.Column("PSRN", pg.TEXT, unique=True),
 
-        # Категория предприятия, например: микропредприятие
-        sa.Column("category", pg.TEXT),
+        # Название компании на русском языке
+        sa.Column("name", pg.TEXT, nullable=False),
 
-        # Вероятность банкротства компаннии, диапазон: [0, 100]
-        sa.Column("bankruptcy_probability", pg.SMALLINT),
+        # Размер компании, 1 и более, если неизвестно, то NULL
+        sa.Column("size", pg.SMALLINT, nullable=True),
+        sa.CheckConstraint(sa.column("size") > 1),
 
-        # Вероятность попадания в негативный лист, диапазон: [0, 100]
-        sa.Column("negative_list_probability", pg.SMALLINT),
+        # Номер региона страны предприятия, например: 05, 77 (2 цифры)
+        sa.Column("region_code", pg.TEXT, nullable=False),
+        sa.CheckConstraint(r"region_code ~ '^[0-9]{2}$'"),
 
-        # Количество замороженных счетов: 0 и боллее
-        sa.Column("frozen_accounts_number", pg.SMALLINT),
+        # Название региона страны предприятия, только большие буквы и тире
+        sa.Column("region_name", pg.TEXT, nullable=False),
+        sa.CheckConstraint(r"region_name ~ '^[А-Я-]{2,}$'"),
 
-        # Находится ли компания в процессе ликвидации
-        sa.Column("in_liquidation_process", pg.BOOLEAN),
+        # Код основного вида деятельности, если неизвестно, то NULL
+        sa.Column("activity_code", pg.SMALLINT, nullable=True),
 
-        # Количество открытых исполнительных производств компании: 0 и более
-        sa.Column("open_enforcement_proceedings_number", pg.SMALLINT),
+        # Название основного вида деятельности, если неизвестно, то NULL
+        sa.Column("activity_name", pg.TEXT, nullable=True),
+        sa.CheckConstraint(r"activity_name ~ '^[А-Я-]{2,}$'"),
 
-        # Число компаний с тем же управляющим, 0 и более
-        sa.Column("same_manager_companies_number", pg.SMALLINT),
+        # Дата регистрации компании
+        sa.Column("registered_at", pg.DATE, nullable=False),
 
-        # Отношение долга к выручке: например: 3,6
-        sa.Column("debt_revenue_ratio", pg.FLOAT),
+        # Уставной капитал компании, 0 и более
+        sa.Column("charter_capital", pg.BIGINT, nullable=False),
+        sa.CheckConstraint(sa.column("charter_capital") > 0),
 
-        # Успешность относительно похожих компаний, диапазон: [0, 5]
-        sa.Column("relative_success", pg.SMALLINT),
+        # Является ли действующей
+        sa.Column("is_acting", pg.BOOLEAN, nullable=False),
 
-        # Прогноз выручки компании в тысячах рублей
-        sa.Column("revenue_forecast", pg.SMALLINT),
+        # Находится ли в стадии ликвидации
+        sa.Column("is_liquidating", pg.BOOLEAN, nullable=False),
+
+        # Не было финансового отчета за прошлый год
+        sa.Column("no_finance_report_last_year", pg.BOOLEAN, nullable=False),
+
+        # Отсутствует в реестре МСП
+        sa.Column("not_in_sme_registry", pg.BOOLEAN, nullable=False),
+
+        # Существует более 5 компаний с тем же управляющим
+        sa.Column("more_than_5_companies_with_same_manager", pg.BOOLEAN),
+
+        # Риск быть в негативном списке
+        sa.Column("negative_list_risk", pg.BOOLEAN, nullable=False),
+
+        # вероятность банкротства
+        sa.Column("bankruptcy_probability", pg.SMALLINT, nullable=False),
+        sa.CheckConstraint(sa.column("bankruptcy_probability") > 0),
+        sa.CheckConstraint(sa.column("bankruptcy_probability") < 100),
+
+        # Значимость переменных для оценки вероятности
+        sa.Column("bankruptcy_vars", pg.JSONB, nullable=False),
+
+        # Достаточно ли данных для оценки
+        sa.Column("is_enough_finance_data", pg.BOOLEAN, nullable=False),
+
+        # Успешность относительно похожих компаний (целое от -9 до +9)
+        sa.Column("relative_success", pg.SMALLINT, nullable=True),
+        sa.CheckConstraint(sa.column("relative_success") > -9),
+        sa.CheckConstraint(sa.column("relative_success") < +9),
+
+        # Прогноз выручки за текущий год в тысячах рублей
+        sa.Column("revenue_forecast", pg.BIGINT, nullable=True),
+        sa.CheckConstraint(sa.column("revenue_forecast") > 0),
 
         # Оценка текущих активов в тысячах рублей
-        sa.Column("asset_valuation", pg.SMALLINT),
+        sa.Column("assets_forecast", pg.BIGINT, nullable=True),
+        sa.CheckConstraint(sa.column("assets_forecast") > 0),
 
-        # Стадия развития компании, диапазон: [0, 5]
-        sa.Column("development_stage", pg.SMALLINT),
+        # Стадия развития компании
+        sa.Column("development_stage", pg.TEXT, nullable=True),
 
-        # Уникальный идентификатор таблицы, ПК
-        sa.PrimaryKeyConstraint("id"),
+        # Значения для отрисовки графика с отображением линии тренда
+        sa.Column("development_stage_coordinates", pg.JSONB, nullable=True),
     )
 
 
