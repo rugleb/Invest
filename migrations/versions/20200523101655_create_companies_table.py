@@ -92,8 +92,8 @@ def upgrade() -> None:
 
         # Успешность относительно похожих компаний (целое от -9 до +9)
         sa.Column("relative_success", pg.SMALLINT, nullable=True),
-        sa.CheckConstraint(sa.column("relative_success") > -9),
-        sa.CheckConstraint(sa.column("relative_success") < +9),
+        sa.CheckConstraint(sa.column("relative_success") >= -9),
+        sa.CheckConstraint(sa.column("relative_success") <= +9),
 
         # Прогноз выручки за текущий год в тысячах рублей
         sa.Column("revenue_forecast", pg.BIGINT, nullable=True),
