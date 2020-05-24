@@ -48,7 +48,8 @@ def upgrade() -> None:
         sa.CheckConstraint("length(region_name) > 4"),
 
         # Код основного вида деятельности, если неизвестно, то NULL
-        sa.Column("activity_code", pg.SMALLINT, nullable=True),
+        sa.Column("activity_code", pg.TEXT, nullable=True),
+        sa.CheckConstraint(r"activity_code ~ '\d{1,2}(\.\d{1,2}){0,2}'"),
 
         # Название основного вида деятельности, если неизвестно, то NULL
         sa.Column("activity_name", pg.TEXT, nullable=True),
