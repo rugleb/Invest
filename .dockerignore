@@ -1,5 +1,7 @@
 *
 !invest_api
+!migrations
+!alembic.ini
 !gunicorn.config.py
 !poetry.lock
 !pyproject.toml

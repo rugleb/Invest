@@ -20,6 +20,11 @@ __all__ = (
 )
 
 
+def asyncio_exception_handler(_, context: Dict) -> None:
+    message = "Caught asyncio exception: {message}".format_map(context)
+    app_logger.warning(message)
+
+
 def setup_asyncio() -> None:
     uvloop.install()
     loop = asyncio.get_event_loop()
@@ -27,11 +32,7 @@ def setup_asyncio() -> None:
     executor = ThreadPoolExecutor(thread_name_prefix="invest_api")
     loop.set_default_executor(executor)
 
-    def handler(_, context: Dict) -> None:
-        message = "Caught asyncio exception: {message}".format_map(context)
-        app_logger.warning(message)
-
-    loop.set_exception_handler(handler)
+    loop.set_exception_handler(asyncio_exception_handler)
 
 
 async def db_context(app: web.Application) -> AsyncIterator:

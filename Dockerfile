@@ -15,7 +15,8 @@ WORKDIR /usr/src/app
 ENV PYTHONOPTIMIZE 1
 
 COPY --from=builder dist dist
-COPY --from=builder gunicorn.config.py ./
+COPY --from=builder migrations migrations
+COPY --from=builder alembic.ini gunicorn.config.py ./
 
 RUN pip install --no-cache-dir --no-index dist/*.whl && \
     rm -rf dist
