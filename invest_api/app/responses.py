@@ -11,7 +11,6 @@ __all__ = (
     "error_response",
     "ok",
     "bad_request",
-    "unsupported_media_type",
     "validation_error",
     "server_error",
 )
@@ -56,10 +55,6 @@ def ok(data: Dict = None, message: str = None) -> web.Response:  # 200
 
 def bad_request(message: str = None) -> web.Response:  # 400
     return error_response(HTTPStatus.BAD_REQUEST, message)
-
-
-def unsupported_media_type() -> web.Response:  # 415
-    return error_response(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
 
 
 def validation_error(errors: Any) -> web.Response:  # 422
