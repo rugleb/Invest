@@ -89,7 +89,7 @@ def upgrade() -> None:
         sa.Column("bankruptcy_vars", pg.JSONB, nullable=True),
 
         # Достаточно ли данных для оценки
-        sa.Column("is_enough_finance_data", pg.BOOLEAN, nullable=False),
+        sa.Column("is_enough_finance_data", pg.BOOLEAN, nullable=True),
 
         # Успешность относительно похожих компаний (целое от -9 до +9)
         sa.Column("relative_success", pg.SMALLINT, nullable=True),
