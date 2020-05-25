@@ -78,7 +78,7 @@ def upgrade() -> None:
         sa.Column("more_than_5_companies_with_same_manager", pg.BOOLEAN),
 
         # Риск быть в негативном списке
-        sa.Column("negative_list_risk", pg.BOOLEAN, nullable=False),
+        sa.Column("negative_list_risk", pg.BOOLEAN, nullable=True),
 
         # вероятность банкротства
         sa.Column("bankruptcy_probability", pg.SMALLINT, nullable=False),
