@@ -66,7 +66,7 @@ def upgrade() -> None:
         sa.Column("is_acting", pg.BOOLEAN, nullable=False),
 
         # Находится ли в стадии ликвидации
-        sa.Column("is_liquidating", pg.BOOLEAN, nullable=False),
+        sa.Column("is_liquidating", pg.BOOLEAN, nullable=True),
 
         # Не было финансового отчета за прошлый год
         sa.Column("no_finance_report_last_year", pg.BOOLEAN, nullable=False),
