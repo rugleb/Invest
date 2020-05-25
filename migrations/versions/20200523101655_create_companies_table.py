@@ -72,7 +72,7 @@ def upgrade() -> None:
         sa.Column("no_finance_report_last_year", pg.BOOLEAN, nullable=True),
 
         # Отсутствует в реестре МСП
-        sa.Column("not_in_sme_registry", pg.BOOLEAN, nullable=False),
+        sa.Column("not_in_sme_registry", pg.BOOLEAN, nullable=True),
 
         # Существует более 5 компаний с тем же управляющим
         sa.Column("more_than_5_companies_with_same_manager", pg.BOOLEAN),
