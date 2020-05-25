@@ -81,7 +81,7 @@ def upgrade() -> None:
         sa.Column("negative_list_risk", pg.BOOLEAN, nullable=True),
 
         # вероятность банкротства
-        sa.Column("bankruptcy_probability", pg.SMALLINT, nullable=False),
+        sa.Column("bankruptcy_probability", pg.SMALLINT, nullable=True),
         sa.CheckConstraint(sa.column("bankruptcy_probability") >= 0),
         sa.CheckConstraint(sa.column("bankruptcy_probability") <= 100),
 
