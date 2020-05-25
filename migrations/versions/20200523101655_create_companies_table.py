@@ -86,7 +86,7 @@ def upgrade() -> None:
         sa.CheckConstraint(sa.column("bankruptcy_probability") <= 100),
 
         # Значимость переменных для оценки вероятности
-        sa.Column("bankruptcy_vars", pg.JSONB, nullable=False),
+        sa.Column("bankruptcy_vars", pg.JSONB, nullable=True),
 
         # Достаточно ли данных для оценки
         sa.Column("is_enough_finance_data", pg.BOOLEAN, nullable=False),
