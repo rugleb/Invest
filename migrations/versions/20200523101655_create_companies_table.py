@@ -69,13 +69,13 @@ def upgrade() -> None:
         sa.Column("is_liquidating", pg.BOOLEAN),
 
         # Не было финансового отчета за прошлый год
-        sa.Column("no_finance_report_last_year", pg.BOOLEAN),
+        sa.Column("reported_in_last_year", pg.BOOLEAN),
 
         # Отсутствует в реестре МСП
         sa.Column("not_in_sme_registry", pg.BOOLEAN),
 
         # Существует более 5 компаний с тем же управляющим
-        sa.Column("more_than_5_companies_with_same_manager", pg.BOOLEAN),
+        sa.Column("ceo_has_other_companies", pg.BOOLEAN),
 
         # Риск быть в негативном списке
         sa.Column("negative_list_risk", pg.BOOLEAN),
@@ -105,10 +105,10 @@ def upgrade() -> None:
         sa.CheckConstraint(sa.column("assets_forecast") > 0),
 
         # Стадия развития компании
-        sa.Column("development_stage", pg.TEXT),
+        sa.Column("dev_stage", pg.TEXT),
 
         # Значения для отрисовки графика с отображением линии тренда
-        sa.Column("development_stage_coordinates", pg.JSONB),
+        sa.Column("dev_stage_coordinates", pg.JSONB),
     )
 
 

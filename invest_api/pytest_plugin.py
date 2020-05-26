@@ -15,7 +15,7 @@ from alembic import command as alembic_command
 from alembic import config as alembic_config
 from sqlalchemy import engine, exc, orm
 
-from invest_api import create_tcp_server
+import invest_api
 
 pytest_plugins = [
     "aiohttp.pytest_plugin",
@@ -158,5 +158,5 @@ async def invest_api_server(
     host = LOCALHOST
     port = unused_port()
 
-    async with create_tcp_server(host, port, config) as url:
+    async with invest_api.create_tcp_server(host, port, config) as url:
         yield url

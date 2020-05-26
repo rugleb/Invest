@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, pool
 config = context.config
 
 # interpret the config file for Python logging.
-fileConfig(config.config_file_name)
+fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 # url for db connection.
 url = getenv("DB_URL") or config.get_main_option("url")

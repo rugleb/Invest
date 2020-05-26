@@ -15,6 +15,17 @@ pytest_plugins = [
 
 
 @pytest.fixture
+def create_company(invest_api_session: orm.Session) -> Callable:
+    assert invest_api_session.is_active
+
+    def factory(company: invest_api.Company) -> None:
+        invest_api_session.add(company)
+        invest_api_session.commit()
+
+    return factory
+
+
+@pytest.fixture
 async def app(invest_api_session: orm.Session) -> Application:
     db_url = str(invest_api_session.bind.url)
 

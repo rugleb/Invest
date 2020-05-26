@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any, Dict
+from typing import Dict
 
 import orjson
 from aiohttp import hdrs, web
