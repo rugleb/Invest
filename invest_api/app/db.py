@@ -4,6 +4,9 @@ from typing import Dict
 from asyncpg.pool import Pool, create_pool
 from marshmallow import Schema, fields, post_load
 
+from .exceptions import CompanyNotFound
+from .models import Company
+
 __all__ = (
     "DB",
     "DBSchema",
@@ -26,12 +29,19 @@ class DB:
     async def check_health(self) -> bool:
         return await self._pool.fetchval("select $1::bool", True)
 
+    async def get_company_by_itn(self, itn: str) -> Company:
+        sql = "SELECT * FROM companies WHERE itn = $1::TEXT LIMIT 1;"
+        record = await self._pool.fetchrow(sql, itn)
+        if record is None:
+            raise CompanyNotFound()
+        return Company(**record)
+
     @classmethod
     def from_dict(cls, data: Dict) -> "DB":
         return DBSchema().load(data)
 
 
-class PoolSchema(Schema):
+class AsyncPGPoolSchema(Schema):
     dsn = fields.Str(required=True)
     min_size = fields.Int(missing=0)
     max_size = fields.Int(missing=10)
@@ -56,7 +66,7 @@ class LoggerSchema(Schema):
 
 
 class DBSchema(Schema):
-    pool = fields.Nested(PoolSchema, required=True)
+    pool = fields.Nested(AsyncPGPoolSchema, required=True)
     logger = fields.Nested(LoggerSchema, required=True)
 
     @post_load
