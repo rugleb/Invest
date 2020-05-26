@@ -30,11 +30,11 @@ class Company(Base):
     activity_code = sa.Column(sa.TEXT)
     activity_name = sa.Column(sa.TEXT)
     charter_capital = sa.Column(sa.BIGINT)
-    is_acting = sa.Column(sa.BOOLEAN)
+    is_acting = sa.Column(sa.BOOLEAN, nullable=False)
 
     # Риск факторы
     is_liquidating = sa.Column(sa.BOOLEAN)
-    reported_in_last_year = sa.Column(sa.BOOLEAN)
+    not_reported_last_year = sa.Column(sa.BOOLEAN)
     not_in_sme_registry = sa.Column(sa.BOOLEAN)
     ceo_has_other_companies = sa.Column(sa.BOOLEAN)
     negative_list_risk = sa.Column(sa.BOOLEAN)
@@ -68,19 +68,19 @@ class CompanySchema(Schema):
     region_name = fields.Str(required=True)
     activity_code = fields.Str(required=True, allow_none=True)
     activity_name = fields.Str(required=True, allow_none=True)
-    charter_capital = fields.Int(required=True)
+    charter_capital = fields.Int(required=True, allow_none=True)
     is_acting = fields.Bool(required=True)
 
     # Риск факторы
     is_liquidating = fields.Bool(required=True, allow_none=True)
-    reported_in_last_year = fields.Bool(required=True, allow_none=True)
+    not_reported_last_year = fields.Bool(required=True, allow_none=True)
     not_in_sme_registry = fields.Bool(required=True, allow_none=True)
     ceo_has_other_companies = fields.Bool(required=True, allow_none=True)
     negative_list_risk = fields.Bool(required=True, allow_none=True)
 
     # Банкротство
     bankruptcy_probability = fields.Int(required=True, allow_none=True)
-    bankruptcy_vars = fields.Dict(required=True, allow_none=True)
+    bankruptcy_vars = fields.Raw(required=True, allow_none=True)
 
     # Финансы
     is_enough_finance_data = fields.Bool(required=True, allow_none=True)
@@ -88,4 +88,4 @@ class CompanySchema(Schema):
     revenue_forecast = fields.Int(required=True, allow_none=True)
     assets_forecast = fields.Int(required=True, allow_none=True)
     dev_stage = fields.Str(required=True, allow_none=True)
-    dev_stage_coordinates = fields.Dict(required=True, allow_none=True)
+    dev_stage_coordinates = fields.Raw(required=True, allow_none=True)

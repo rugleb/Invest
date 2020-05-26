@@ -69,7 +69,7 @@ def upgrade() -> None:
         sa.Column("is_liquidating", pg.BOOLEAN),
 
         # Не было финансового отчета за прошлый год
-        sa.Column("reported_in_last_year", pg.BOOLEAN),
+        sa.Column("not_reported_last_year", pg.BOOLEAN),
 
         # Отсутствует в реестре МСП
         sa.Column("not_in_sme_registry", pg.BOOLEAN),
