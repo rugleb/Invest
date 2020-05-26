@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any, Dict
+from typing import Dict
 
 import orjson
 from aiohttp import hdrs, web
@@ -11,8 +11,6 @@ __all__ = (
     "error_response",
     "ok",
     "bad_request",
-    "unsupported_media_type",
-    "validation_error",
     "server_error",
 )
 
@@ -56,18 +54,6 @@ def ok(data: Dict = None, message: str = None) -> web.Response:  # 200
 
 def bad_request(message: str = None) -> web.Response:  # 400
     return error_response(HTTPStatus.BAD_REQUEST, message)
-
-
-def unsupported_media_type() -> web.Response:  # 415
-    return error_response(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
-
-
-def validation_error(errors: Any) -> web.Response:  # 422
-    content = {
-        "errors": errors,
-        "message": "Input payload validation failed",
-    }
-    return create_response(content, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 def server_error() -> web.Response:  # 500
