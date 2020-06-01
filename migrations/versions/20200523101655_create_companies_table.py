@@ -25,11 +25,11 @@ def upgrade() -> None:
         sa.Column("id", pg.BIGINT, primary_key=True),
 
         # ИНН компании, 10 цифр, уникальный по всей таблице
-        sa.Column("itn", pg.TEXT, unique=True),
+        sa.Column("itn", pg.TEXT, unique=True, index=True),
         sa.CheckConstraint(r"itn ~ '^[0-9]{10}$'"),
 
         # ОГРН компании, 13 цифр, уникальный по всей таблице
-        sa.Column("psrn", pg.TEXT, unique=True),
+        sa.Column("psrn", pg.TEXT, unique=True, index=True),
         sa.CheckConstraint(r"psrn ~ '^[0-9]{13}$'"),
 
         # Название компании на русском языке
