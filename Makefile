@@ -12,6 +12,7 @@ TESTS := tests
 MIGRATIONS := migrations
 
 IMAGE_NAME := $(PROJECT)
+AZURE_IMAGE_TAG := altdata.azurecr.io/invest/$(IMAGE_NAME):$(VERSION)
 
 clean:
 	rm -rf .mypy_cache
@@ -63,6 +64,10 @@ lint: isort mypy pylint flake bandit test
 
 build: lint cov
 	docker build . -t $(IMAGE_NAME) --pull
+
+deploy: build
+	docker tag $(IMAGE_NAME):latest $(AZURE_IMAGE_TAG)
+	docker push $(AZURE_IMAGE_TAG)
 
 all: lint cov build
 
