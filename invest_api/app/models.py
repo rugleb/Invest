@@ -9,6 +9,7 @@ DATE_FORMAT = "%Y-%m-%d"
 __all__ = (
     "Base",
     "Company",
+    "CompanySchema",
 )
 
 Base: DeclarativeMeta = declarative_base()
