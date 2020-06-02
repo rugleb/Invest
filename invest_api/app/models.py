@@ -10,6 +10,7 @@ __all__ = (
     "Base",
     "Company",
     "CompanySchema",
+    "CompanyQuerySchema",
 )
 
 Base: DeclarativeMeta = declarative_base()
@@ -81,7 +82,7 @@ class CompanySchema(Schema):
 
     # Банкротство
     bankruptcy_probability = fields.Int(required=True, allow_none=True)
-    bankruptcy_vars = fields.Raw(required=True, allow_none=True)
+    bankruptcy_vars = fields.Str(required=True, allow_none=True)
 
     # Финансы
     is_enough_finance_data = fields.Bool(required=True, allow_none=True)
@@ -89,4 +90,9 @@ class CompanySchema(Schema):
     revenue_forecast = fields.Int(required=True, allow_none=True)
     assets_forecast = fields.Int(required=True, allow_none=True)
     dev_stage = fields.Str(required=True, allow_none=True)
-    dev_stage_coordinates = fields.Raw(required=True, allow_none=True)
+    dev_stage_coordinates = fields.Str(required=True, allow_none=True)
+
+
+class CompanyQuerySchema(Schema):
+    name = fields.Str(required=True)
+    limit = fields.Int(missing=5)

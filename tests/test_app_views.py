@@ -2,6 +2,7 @@ from datetime import date
 from http import HTTPStatus
 from typing import Callable
 
+import pytest
 from aiohttp.test_utils import TestClient
 
 from invest_api import Company
@@ -21,7 +22,7 @@ class TestPingView:
         assert response.status == HTTPStatus.OK
 
         assert await response.json() == {
-            "data": {},
+            "data": None,
             "message": "pong",
         }
 
@@ -42,7 +43,7 @@ class TestHealthView:
         assert response.status == HTTPStatus.OK
 
         assert await response.json() == {
-            "data": {},
+            "data": None,
             "message": "OK",
         }
 
@@ -51,20 +52,20 @@ class TestHealthView:
 
 
 class TestCompanyView:
-    url = "/companies/{itn}"
+    url = "/companies/{id}"
 
     async def test_that_route_is_named(self, client: TestClient) -> None:
-        itn = "7710561081"
-        url = client.app.router["company"].url_for(itn=itn)
+        identifier = "7710561081"
+        url = client.app.router["company"].url_for(id=identifier)
 
-        assert self.url.format(itn=itn) == str(url)
+        assert self.url.format(id=identifier) == str(url)
 
     async def test_request_with_not_existing_company(
             self,
             client: TestClient,
     ) -> None:
-        itn = "8887776655"
-        url = self.url.format(itn=itn)
+        identifier = "8887776655"
+        url = self.url.format(id=identifier)
 
         response = await client.get(url)
         assert response.status == HTTPStatus.NOT_FOUND
@@ -73,10 +74,15 @@ class TestCompanyView:
             "message": "Not found",
         }
 
+    @pytest.mark.parametrize("identifier_key", [
+        "itn",
+        "psrn",
+    ])
     async def test_request_with_existing_company(
             self,
             client: TestClient,
             create_company: Callable,
+            identifier_key: str,
     ) -> None:
         company = Company(
             id=1,
@@ -107,40 +113,102 @@ class TestCompanyView:
         )
         create_company(company)
 
-        url = self.url.format(itn=company.itn)
+        identifier = getattr(company, identifier_key)
+        url = self.url.format(id=identifier)
 
         response = await client.get(url)
         assert response.status == HTTPStatus.OK
 
-        data = {
-            "id": company.id,
-            "name": company.name,
-            "size": company.size,
-            "registered_at": company.registered_at.strftime("%Y-%m-%d"),
-            "itn": company.itn,
-            "psrn": company.psrn,
-            "region_code": company.region_code,
-            "region_name": company.region_name,
-            "activity_code": company.activity_code,
-            "activity_name": company.activity_name,
-            "charter_capital": company.charter_capital,
-            "is_acting": company.is_acting,
-            "is_liquidating": company.is_liquidating,
-            "not_reported_last_year": company.not_reported_last_year,
-            "not_in_sme_registry": company.not_in_sme_registry,
-            "ceo_has_other_companies": company.ceo_has_other_companies,
-            "negative_list_risk": company.negative_list_risk,
-            "bankruptcy_probability": company.bankruptcy_probability,
-            "bankruptcy_vars": company.bankruptcy_vars,
-            "is_enough_finance_data": company.is_enough_finance_data,
-            "relative_success": company.relative_success,
-            "revenue_forecast": company.revenue_forecast,
-            "assets_forecast": company.assets_forecast,
-            "dev_stage": company.dev_stage,
-            "dev_stage_coordinates": company.dev_stage_coordinates,
-        }
+        data = company.to_dict()
 
         assert await response.json() == {
             "data": data,
+            "message": "OK",
+        }
+
+
+class TestCompaniesView:
+    url = "/companies"
+
+    async def test_that_route_is_named(self, client: TestClient) -> None:
+        url = client.app.router["companies"].url_for()
+
+        assert self.url == str(url)
+
+    async def test_request_without_query_params(
+            self,
+            client: TestClient,
+    ) -> None:
+        response = await client.get(self.url)
+        assert response.status == HTTPStatus.UNPROCESSABLE_ENTITY
+
+        assert await response.json() == {
+            "errors": {
+                "name": ["Missing data for required field."],
+            },
+            "message": "Input payload validation failed",
+        }
+
+    async def test_request_with_undefined_company_name(
+            self,
+            client: TestClient,
+    ) -> None:
+        params = {
+            "name": "undefined",
+        }
+
+        response = await client.get(self.url, params=params)
+        assert response.status == HTTPStatus.OK
+
+        assert await response.json() == {
+            "data": [],
+            "message": "OK",
+        }
+
+    async def test_request_with_existing_company_name(
+            self,
+            client: TestClient,
+            create_company: Callable,
+    ) -> None:
+        company = Company(
+            id=1,
+            name="ОАО Ёжики и Грибочки",
+            size="Микропредприятие",
+            registered_at=date(2010, 1, 1),
+            itn="2464222938",
+            psrn="1102454000670",
+            region_code="77",
+            region_name="Москва",
+            activity_code="47.51.1",
+            activity_name="Семейный подряд",
+            charter_capital=1000,
+            is_acting=True,
+            is_liquidating=False,
+            not_reported_last_year=True,
+            not_in_sme_registry=False,
+            ceo_has_other_companies=True,
+            negative_list_risk=False,
+            bankruptcy_probability=5,
+            bankruptcy_vars=None,
+            is_enough_finance_data=True,
+            relative_success=7,
+            revenue_forecast=25000,
+            assets_forecast=20000,
+            dev_stage="Рост активов",
+            dev_stage_coordinates=None,
+        )
+        create_company(company)
+
+        params = {
+            "name": "ежеки",
+        }
+
+        response = await client.get(self.url, params=params)
+        assert response.status == HTTPStatus.OK
+
+        assert await response.json() == {
+            "data": [
+                company.to_dict(),
+            ],
             "message": "OK",
         }

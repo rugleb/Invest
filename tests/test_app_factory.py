@@ -18,7 +18,7 @@ async def test_invest_api_server_fixture(invest_api_server: URL) -> None:
             assert response.status == HTTPStatus.OK
 
             assert await response.json() == {
-                "data": {},
+                "data": None,
                 "message": "OK",
             }
 

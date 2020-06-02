@@ -1,10 +1,11 @@
 from aiohttp import web
+from marshmallow import ValidationError
 
 from invest_api.types import Handler
 from invest_api.utils import generate_request_id
 
 from .context import REQUEST_ID
-from .responses import error_response, server_error
+from .responses import error_response, server_error, validation_error
 
 __all__ = ("add_middlewares", )
 
@@ -37,7 +38,17 @@ async def client_error_handler(request: web.Request, handler: Handler):
         return error_response(e.status)
 
 
+@web.middleware
+async def validation_error_handler(request: web.Request, handler: Handler):
+    try:
+        return await handler(request)
+    except ValidationError as e:
+        errors = e.messages
+        return validation_error(errors)
+
+
 def add_middlewares(app: web.Application) -> None:
     app.middlewares.append(request_id_handler)
     app.middlewares.append(default_error_handler)
     app.middlewares.append(client_error_handler)
+    app.middlewares.append(validation_error_handler)
