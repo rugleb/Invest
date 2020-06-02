@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Dict
+from typing import Any, Dict
 
 import orjson
 from aiohttp import hdrs, web
@@ -11,6 +11,7 @@ __all__ = (
     "error_response",
     "ok",
     "bad_request",
+    "validation_error",
     "server_error",
 )
 
@@ -44,7 +45,7 @@ def error_response(status: int, message: str = None) -> web.Response:
     return create_response(content, status)
 
 
-def ok(data: Dict = None, message: str = None) -> web.Response:  # 200
+def ok(data: Any = None, message: str = None) -> web.Response:  # 200
     content = {
         "data": data or {},
         "message": message or "OK",
@@ -54,6 +55,17 @@ def ok(data: Dict = None, message: str = None) -> web.Response:  # 200
 
 def bad_request(message: str = None) -> web.Response:  # 400
     return error_response(HTTPStatus.BAD_REQUEST, message)
+
+
+def validation_error(errors: Any) -> web.Response:  # 422
+    message = "Input payload validation failed."
+
+    content = {
+        "errors": errors,
+        "message": message,
+    }
+
+    return create_response(content, HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
 def server_error() -> web.Response:  # 500
