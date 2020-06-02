@@ -36,6 +36,13 @@ class DB:
             raise CompanyNotFound()
         return Company(**record)
 
+    async def get_company_by_psrn(self, psrn: str) -> Company:
+        sql = "SELECT * FROM companies WHERE psrn = $1::TEXT LIMIT 1;"
+        record = await self._pool.fetchrow(sql, psrn)
+        if record is None:
+            raise CompanyNotFound()
+        return Company(**record)
+
     @classmethod
     def from_dict(cls, data: Dict) -> "DB":
         return DBSchema().load(data)
