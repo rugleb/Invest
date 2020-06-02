@@ -1,7 +1,7 @@
 """Create companies table.
 
 Revision ID: 96ad09283de8
-Revises: 8029d353248e
+Revises: d6bc2eff5e21
 Create Date: 2020-05-23 10:16:55.630632
 
 """
@@ -11,7 +11,7 @@ from alembic import op
 from sqlalchemy.dialects import postgresql as pg
 
 revision = "96ad09283de8"
-down_revision = None
+down_revision = "d6bc2eff5e21"
 branch_labels = None
 depends_on = None
 
@@ -25,11 +25,11 @@ def upgrade() -> None:
         sa.Column("id", pg.BIGINT, primary_key=True),
 
         # ИНН компании, 10 цифр, уникальный по всей таблице
-        sa.Column("itn", pg.TEXT, unique=True, index=True),
+        sa.Column("itn", pg.TEXT, unique=True),
         sa.CheckConstraint(r"itn ~ '^[0-9]{10}$'"),
 
         # ОГРН компании, 13 цифр, уникальный по всей таблице
-        sa.Column("psrn", pg.TEXT, unique=True, index=True),
+        sa.Column("psrn", pg.TEXT, unique=True),
         sa.CheckConstraint(r"psrn ~ '^[0-9]{13}$'"),
 
         # Название компании на русском языке
@@ -109,6 +109,36 @@ def upgrade() -> None:
 
         # Значения для отрисовки графика с отображением линии тренда
         sa.Column("dev_stage_coordinates", pg.JSONB),
+
+        sa.Index(
+            "companies_itn_idx",
+            "itn",
+            postgresql_using="btree",
+            postgresql_with={
+                "fillfactor": 97,
+            },
+        ),
+
+        sa.Index(
+            "companies_psrn_idx",
+            "psrn",
+            postgresql_using="btree",
+            postgresql_with={
+                "fillfactor": 97,
+            },
+        ),
+
+        sa.Index(
+            "companies_name_idx",
+            "name",
+            postgresql_using="gist",
+            postgresql_ops={
+                "name": "gist_trgm_ops",
+            },
+            postgresql_with={
+                "fillfactor": 97,
+            },
+        )
     )
 
 

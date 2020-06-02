@@ -10,7 +10,6 @@ __all__ = (
     "create_response",
     "error_response",
     "ok",
-    "bad_request",
     "validation_error",
     "server_error",
 )
@@ -47,18 +46,14 @@ def error_response(status: int, message: str = None) -> web.Response:
 
 def ok(data: Any = None, message: str = None) -> web.Response:  # 200
     content = {
-        "data": data or {},
+        "data": data,
         "message": message or "OK",
     }
     return create_response(content, HTTPStatus.OK)
 
 
-def bad_request(message: str = None) -> web.Response:  # 400
-    return error_response(HTTPStatus.BAD_REQUEST, message)
-
-
 def validation_error(errors: Any) -> web.Response:  # 422
-    message = "Input payload validation failed."
+    message = "Input payload validation failed"
 
     content = {
         "errors": errors,

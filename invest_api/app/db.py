@@ -30,18 +30,35 @@ class DB:
         return await self._pool.fetchval("select $1::bool", True)
 
     async def get_company_by_itn(self, itn: str) -> Company:
-        sql = "SELECT * FROM companies WHERE itn = $1::TEXT LIMIT 1;"
-        record = await self._pool.fetchrow(sql, itn)
+        query = "SELECT * FROM companies WHERE itn = $1::TEXT LIMIT 1;"
+        record = await self._pool.fetchrow(query, itn)
         if record is None:
             raise CompanyNotFound()
         return Company(**record)
 
     async def get_company_by_psrn(self, psrn: str) -> Company:
-        sql = "SELECT * FROM companies WHERE psrn = $1::TEXT LIMIT 1;"
-        record = await self._pool.fetchrow(sql, psrn)
+        query = "SELECT * FROM companies WHERE psrn = $1::TEXT LIMIT 1;"
+        record = await self._pool.fetchrow(query, psrn)
         if record is None:
             raise CompanyNotFound()
         return Company(**record)
+
+    async def get_companies_by_name(
+            self,
+            name: str,
+            limit: int = 5,
+    ):
+        query = """
+            SELECT
+                *
+                , companies.name <-> $1::TEXT AS distance
+            FROM companies
+            ORDER BY distance
+            LIMIT $2::SMALLINT
+            ;
+        """
+
+        return await self._pool.fetch(query, name, limit)
 
     @classmethod
     def from_dict(cls, data: Dict) -> "DB":

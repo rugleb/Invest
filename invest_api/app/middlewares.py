@@ -43,7 +43,7 @@ async def validation_error_handler(request: web.Request, handler: Handler):
     try:
         return await handler(request)
     except ValidationError as e:
-        errors = e.normalized_messages()
+        errors = e.messages
         return validation_error(errors)
 
 
