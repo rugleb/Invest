@@ -1,4 +1,4 @@
-from typing import Dict, Mapping
+from typing import Dict
 
 import attr
 import sqlalchemy as sa

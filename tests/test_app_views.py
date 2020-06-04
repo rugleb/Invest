@@ -54,11 +54,15 @@ class TestHealthView:
 class TestCompanyDetailsView:
     url = "/companies/{id}"
 
+    @pytest.mark.parametrize("identifier", [
+        "8887776655",
+        "88877766554433",
+    ])
     async def test_request_with_not_existing_company(
             self,
             client: TestClient,
+            identifier: str,
     ) -> None:
-        identifier = "8887776655"
         url = self.url.format(id=identifier)
 
         response = await client.get(url)
@@ -206,7 +210,7 @@ class TestCompaniesQueryView:
 class TestCompaniesSelectionView:
     url = "/companies/selection"
 
-    async def test_request_with_existing_company(
+    async def test_request_without_query_params(
             self,
             client: TestClient,
     ) -> None:
