@@ -138,6 +138,23 @@ def upgrade() -> None:
             postgresql_with={
                 "fillfactor": 97,
             },
+        ),
+
+        sa.Index(
+            "companies_selection_idx",
+            "size",
+            "region_code",
+            "is_acting",
+            "bankruptcy_probability",
+            "is_liquidating",
+            "not_reported_last_year",
+            "not_in_sme_registry",
+            "ceo_has_other_companies",
+            "negative_list_risk",
+            postgresql_using="btree",
+            postgresql_with={
+                "fillfactor": 97,
+            },
         )
     )
 
