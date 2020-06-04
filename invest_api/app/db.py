@@ -5,7 +5,7 @@ from asyncpg.pool import Pool, create_pool
 from marshmallow import Schema, fields, post_load
 
 from .exceptions import CompanyNotFound
-from .models import Company
+from .models import Company, CompanySelection
 
 __all__ = (
     "DB",
@@ -47,7 +47,7 @@ class DB:
             self,
             name: str,
             limit: int = 5,
-    ):
+    ) -> list:
         query = """
             SELECT
                 *
@@ -59,6 +59,38 @@ class DB:
         """
 
         return await self._pool.fetch(query, name, limit)
+
+    async def select_company(self, params: CompanySelection) -> list:
+        query = """
+            SELECT * FROM companies WHERE
+                size = $1::TEXT
+                AND region_code = any($2::TEXT[])
+                AND is_acting = $3::BOOL
+                AND bankruptcy_probability <= $4::SMALLINT
+                AND is_liquidating = $5::BOOL
+                AND not_reported_last_year = $6::BOOL
+                AND not_in_same_registry = $7::BOOL
+                AND ceo_has_other_companies = $8::BOOL
+                AND negative_list_risk = $9::BOOL
+            LIMIT $10::SMALLINT
+            OFFSET $11::SMALLINT
+            ;
+        """
+
+        return await self._pool.fetch(
+            query,
+            params.size,
+            params.region_codes.split(","),
+            params.is_acting,
+            params.bankruptcy_probability,
+            params.is_liquidating,
+            params.not_reported_last_year,
+            params.not_in_same_registry,
+            params.ceo_has_other_companies,
+            params.negative_list_risk,
+            params.limit,
+            params.offset
+        )
 
     @classmethod
     def from_dict(cls, data: Dict) -> "DB":

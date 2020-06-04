@@ -72,7 +72,7 @@ def upgrade() -> None:
         sa.Column("not_reported_last_year", pg.BOOLEAN),
 
         # Отсутствует в реестре МСП
-        sa.Column("not_in_sme_registry", pg.BOOLEAN),
+        sa.Column("not_in_same_registry", pg.BOOLEAN),
 
         # Существует более 5 компаний с тем же управляющим
         sa.Column("ceo_has_other_companies", pg.BOOLEAN),
@@ -148,7 +148,7 @@ def upgrade() -> None:
             "bankruptcy_probability",
             "is_liquidating",
             "not_reported_last_year",
-            "not_in_sme_registry",
+            "not_in_same_registry",
             "ceo_has_other_companies",
             "negative_list_risk",
             postgresql_using="btree",
