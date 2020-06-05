@@ -289,3 +289,58 @@ class TestCompaniesSelectionView:
             ],
             "message": "OK",
         }
+
+
+class TestRegionsView:
+    url = "/regions"
+
+    async def test_request_with_non_empty_data(
+            self,
+            client: TestClient,
+            create_company: Callable,
+    ) -> None:
+        regions = {
+            "01": "Алтайский край",
+            "03": "Краснодарский край",
+            "04": "Красноярский край",
+        }
+
+        for i, (region_code, region_name) in enumerate(regions.items()):
+            itn = region_code * 5
+            psrn = f"{region_code * 6}{i}"
+
+            company = Company(
+                id=i,
+                name="ЗАО ОКБ",
+                size="Крупная",
+                registered_at=date(2010, 1, 1),
+                itn=itn,
+                psrn=psrn,
+                region_code=region_code,
+                region_name=region_name,
+                activity_code="5",
+                activity_name="Высокая",
+                charter_capital=1200,
+                is_acting=True,
+                is_liquidating=False,
+                not_reported_last_year=True,
+                not_in_same_registry=False,
+                ceo_has_other_companies=True,
+                negative_list_risk=False,
+                bankruptcy_probability=5,
+                bankruptcy_vars=None,
+                is_enough_finance_data=True,
+                relative_success=7,
+                revenue_forecast=25000,
+                assets_forecast=20000,
+                dev_stage="Развивается активно",
+                dev_stage_coordinates=None,
+            )
+            create_company(company)
+
+        response = await client.get(self.url)
+
+        assert await response.json() == {
+            "data": regions,
+            "message": "OK",
+        }

@@ -57,6 +57,12 @@ async def company_details_view(request: web.Request) -> web.Response:
     return ok(data)
 
 
+async def regions_view(request: web.Request) -> web.Response:
+    regions = await get_db(request).get_regions()
+    data = dict(regions)
+    return ok(data)
+
+
 def add_routes(app: web.Application) -> None:
     app.router.add_route(hdrs.METH_ANY, "/ping", ping_view, name="ping")
     app.router.add_route(hdrs.METH_ANY, "/health", health_view, name="health")
@@ -64,3 +70,5 @@ def add_routes(app: web.Application) -> None:
     app.router.add_get("/companies/query", companies_query_view)
     app.router.add_get("/companies/selection", companies_selection_view)
     app.router.add_get("/companies/{id}", company_details_view)
+
+    app.router.add_get("/regions", regions_view)
