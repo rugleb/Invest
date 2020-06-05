@@ -92,6 +92,19 @@ class DB:
             params.offset
         )
 
+    async def get_regions(self) -> list:
+        query = """
+            SELECT
+                DISTINCT region_code, region_name
+            FROM
+                companies
+            ORDER BY
+                region_code
+            ;
+        """
+
+        return await self._pool.fetch(query)
+
     @classmethod
     def from_dict(cls, data: Dict) -> "DB":
         return DBSchema().load(data)
