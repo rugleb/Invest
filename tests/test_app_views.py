@@ -51,20 +51,18 @@ class TestHealthView:
         assert is_valid_uuid(request_id)
 
 
-class TestCompanyView:
+class TestCompanyDetailsView:
     url = "/companies/{id}"
 
-    async def test_that_route_is_named(self, client: TestClient) -> None:
-        identifier = "7710561081"
-        url = client.app.router["company"].url_for(id=identifier)
-
-        assert self.url.format(id=identifier) == str(url)
-
+    @pytest.mark.parametrize("identifier", [
+        "8887776655",
+        "88877766554433",
+    ])
     async def test_request_with_not_existing_company(
             self,
             client: TestClient,
+            identifier: str,
     ) -> None:
-        identifier = "8887776655"
         url = self.url.format(id=identifier)
 
         response = await client.get(url)
@@ -99,7 +97,7 @@ class TestCompanyView:
             is_acting=True,
             is_liquidating=False,
             not_reported_last_year=True,
-            not_in_sme_registry=False,
+            not_in_same_registry=False,
             ceo_has_other_companies=True,
             negative_list_risk=False,
             bankruptcy_probability=5,
@@ -127,13 +125,8 @@ class TestCompanyView:
         }
 
 
-class TestCompaniesView:
-    url = "/companies"
-
-    async def test_that_route_is_named(self, client: TestClient) -> None:
-        url = client.app.router["companies"].url_for()
-
-        assert self.url == str(url)
+class TestCompaniesQueryView:
+    url = "/companies/query"
 
     async def test_request_without_query_params(
             self,
@@ -165,7 +158,7 @@ class TestCompaniesView:
             "message": "OK",
         }
 
-    async def test_request_with_existing_company_name(
+    async def test_request_with_existing_company(
             self,
             client: TestClient,
             create_company: Callable,
@@ -185,7 +178,7 @@ class TestCompaniesView:
             is_acting=True,
             is_liquidating=False,
             not_reported_last_year=True,
-            not_in_sme_registry=False,
+            not_in_same_registry=False,
             ceo_has_other_companies=True,
             negative_list_risk=False,
             bankruptcy_probability=5,
@@ -201,6 +194,90 @@ class TestCompaniesView:
 
         params = {
             "name": "ежеки",
+        }
+
+        response = await client.get(self.url, params=params)
+        assert response.status == HTTPStatus.OK
+
+        assert await response.json() == {
+            "data": [
+                company.to_dict(),
+            ],
+            "message": "OK",
+        }
+
+
+class TestCompaniesSelectionView:
+    url = "/companies/selection"
+
+    async def test_request_without_query_params(
+            self,
+            client: TestClient,
+    ) -> None:
+        response = await client.get(self.url)
+        assert response.status == HTTPStatus.UNPROCESSABLE_ENTITY
+
+        missing_required_field = ["Missing data for required field."]
+
+        assert await response.json() == {
+            "errors": {
+                "size": missing_required_field,
+                "region_codes": missing_required_field,
+                "is_acting": missing_required_field,
+                "is_liquidating": missing_required_field,
+                "not_reported_last_year": missing_required_field,
+                "not_in_same_registry": missing_required_field,
+                "ceo_has_other_companies": missing_required_field,
+                "negative_list_risk": missing_required_field,
+                "bankruptcy_probability": missing_required_field,
+            },
+            "message": "Input payload validation failed",
+        }
+
+    async def test_request_with_existing_company(
+            self,
+            client: TestClient,
+            create_company: Callable,
+    ) -> None:
+        company = Company(
+            id=1,
+            name="ЗАО ОКБ",
+            size="Крупная",
+            registered_at=date(2010, 1, 1),
+            itn="7710561081",
+            psrn="1047796788819",
+            region_code="77",
+            region_name="Москва",
+            activity_code="5",
+            activity_name="Высокая",
+            charter_capital=1200,
+            is_acting=True,
+            is_liquidating=False,
+            not_reported_last_year=True,
+            not_in_same_registry=False,
+            ceo_has_other_companies=True,
+            negative_list_risk=False,
+            bankruptcy_probability=5,
+            bankruptcy_vars=None,
+            is_enough_finance_data=True,
+            relative_success=7,
+            revenue_forecast=25000,
+            assets_forecast=20000,
+            dev_stage="Развивается активно",
+            dev_stage_coordinates=None,
+        )
+        create_company(company)
+
+        params = {
+            "size": company.size,
+            "region_codes": company.region_code,
+            "is_acting": int(company.is_acting),
+            "bankruptcy_probability": int(company.bankruptcy_probability),
+            "is_liquidating": int(company.is_liquidating),
+            "not_reported_last_year": int(company.not_reported_last_year),
+            "not_in_same_registry": int(company.not_in_same_registry),
+            "ceo_has_other_companies": int(company.ceo_has_other_companies),
+            "negative_list_risk": int(company.negative_list_risk),
         }
 
         response = await client.get(self.url, params=params)
