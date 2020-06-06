@@ -19,7 +19,7 @@ services:
     ports:
       - 8080:8080
     environment:
-      - DB_URL=postgresql://postgres:ch1buc.0_o@40.118.82.131:5432/invest_db
+      - DB_URL=postgresql://${DB_USER}:${DB_PASSWORD}@invest_db:5432/${DB_PASSWORD}
     depends_on:
       - invest_migrations
     networks:
