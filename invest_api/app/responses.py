@@ -19,6 +19,7 @@ HEADERS: Headers = {
     hdrs.CACHE_CONTROL: "no-cache, no-store",
     hdrs.EXPIRES: "0",
     hdrs.PRAGMA: "no-cache",
+    hdrs.ACCESS_CONTROL_ALLOW_ORIGIN: "*",
 }
 
 
