@@ -60,6 +60,14 @@ version = ">=1.4.0,<1.5"
 
 [[package]]
 category = "main"
+description = "Simple lru_cache for asyncio"
+name = "async-lru"
+optional = false
+python-versions = "*"
+version = "1.0.2"
+
+[[package]]
+category = "main"
 description = "Timeout context manager for asyncio programs"
 name = "async-timeout"
 optional = false
@@ -815,7 +823,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "7019f939e28d70c4b4a739c63521c1731a5f07a1d99efec84584ed9d177997ce"
+content-hash = "b9da50f2b5163fdafb95f0b191568fb2145e7894f09b282432e237fd3485ec19"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -843,6 +851,9 @@ alembic = [
 astroid = [
     {file = "astroid-2.3.3-py3-none-any.whl", hash = "sha256:840947ebfa8b58f318d42301cf8c0a20fd794a33b61cc4638e28e9e61ba32f42"},
     {file = "astroid-2.3.3.tar.gz", hash = "sha256:71ea07f44df9568a75d0f354c49143a4575d90645e9fead6dfb52c26a85ed13a"},
+]
+async-lru = [
+    {file = "async_lru-1.0.2.tar.gz", hash = "sha256:baa898027619f5cc31b7966f96f00e4fc0df43ba206a8940a5d1af5336a477cb"},
 ]
 async-timeout = [
     {file = "async-timeout-3.0.1.tar.gz", hash = "sha256:0c3c816a028d47f659d6ff5c745cb2acf1f966da1fe5c19c77a70282b25f4c5f"},

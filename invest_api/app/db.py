@@ -1,6 +1,7 @@
 import logging
 from typing import Dict
 
+from async_lru import alru_cache
 from asyncpg.pool import Pool, create_pool
 from marshmallow import Schema, fields, post_load
 
@@ -11,6 +12,8 @@ __all__ = (
     "DB",
     "DBSchema",
 )
+
+CACHED = alru_cache(maxsize=512, cache_exceptions=False)
 
 
 class DB:
@@ -29,6 +32,7 @@ class DB:
     async def check_health(self) -> bool:
         return await self._pool.fetchval("select $1::bool", True)
 
+    @CACHED
     async def get_company_by_itn(self, itn: str) -> Company:
         query = "SELECT * FROM companies WHERE itn = $1::TEXT LIMIT 1;"
         record = await self._pool.fetchrow(query, itn)
@@ -36,6 +40,7 @@ class DB:
             raise CompanyNotFound()
         return Company(**record)
 
+    @CACHED
     async def get_company_by_psrn(self, psrn: str) -> Company:
         query = "SELECT * FROM companies WHERE psrn = $1::TEXT LIMIT 1;"
         record = await self._pool.fetchrow(query, psrn)
@@ -43,6 +48,7 @@ class DB:
             raise CompanyNotFound()
         return Company(**record)
 
+    @CACHED
     async def get_companies_by_name(
             self,
             name: str,
@@ -60,6 +66,7 @@ class DB:
 
         return await self._pool.fetch(query, name, limit)
 
+    @CACHED
     async def select_company(self, params: CompanySelection) -> list:
         query = """
             SELECT * FROM companies WHERE
@@ -72,6 +79,8 @@ class DB:
                 AND not_in_same_registry = $7::BOOL
                 AND ceo_has_other_companies = $8::BOOL
                 AND negative_list_risk = $9::BOOL
+            ORDER BY
+                bankruptcy_probability
             LIMIT $10::SMALLINT
             OFFSET $11::SMALLINT
             ;
