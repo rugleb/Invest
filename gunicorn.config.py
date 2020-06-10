@@ -24,11 +24,11 @@ worker_class = env("GUNICORN_WORKER_CLASS", "aiohttp.GunicornUVLoopWebWorker")
 # The maximum number of requests a worker will process before restarting.
 # Any value greater than zero will limit the number of requests
 # a work will process before automatically restarting.
-max_requests = env("GUNICORN_MAX_REQUESTS", 1000)
+max_requests = env("GUNICORN_MAX_REQUESTS", 100)
 
 # If a worker does not notify the master process in this number of
 # seconds it is killed and a new worker is spawned to replace it.
-timeout = env("GUNICORN_TIMEOUT", 30)
+timeout = env("GUNICORN_TIMEOUT", 10)
 
 # Timeout for graceful workers restart.
 graceful_timeout = env("GUNICORN_GRACEFUL_TIMEOUT", 5)
@@ -64,3 +64,9 @@ access_log_format = log.ACCESS_LOG_FORMAT
 # The log config dictionary to use, using the standard Python
 # logging module’s dictionary configuration format.
 logconfig_dict = log.CONFIG
+
+# A base to use with setproctitle for process naming
+proc_name = env("GUNICORN_PROC_NAME", "invest_api")
+
+# Internal setting that is adjusted for each type of application.
+default_proc_name = env("GUNiCORN_DEFAULT_PROC_NAME", "invest_api")
